@@ -1,0 +1,14 @@
+/dist/
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+__debug_bin
+
+.env
+*.env
+
+.vscode/
+.idea/
