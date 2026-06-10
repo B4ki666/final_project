@@ -4,34 +4,30 @@ import (
 	"log"
 	"os"
 
+	"final_project/internal/config"
+	"final_project/internal/db"
 	"final_project/internal/server"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
 	logger := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
-	port := getPort(logger)
-	srv := server.NewServer(logger, port)
-
-	err := srv.Start()
+	cfg, err := config.Load()
 	if err != nil {
 		logger.Fatal(err)
 	}
-}
 
-func getPort(logger *log.Logger) string {
-
-	err := godotenv.Load()
+	db, err := db.InitDB(cfg.DBFile)
 	if err != nil {
-		logger.Println(err)
+		logger.Fatal(err)
 	}
+	logger.Println("db is ready")
+	defer db.Close()
 
-	port := os.Getenv("TODO_PORT")
-	if port == "" {
-		port = "7540"
+	srv := server.NewServer(logger, cfg.Port)
+
+	err = srv.Start()
+	if err != nil {
+		logger.Fatal(err)
 	}
-
-	return port
 }
