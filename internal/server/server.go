@@ -1,6 +1,7 @@
 package server
 
 import (
+	"final_project/internal/handler"
 	"log"
 	"net/http"
 	"time"
@@ -38,6 +39,10 @@ func NewServer(logger *log.Logger, port string) *Server {
 
 func (s *Server) registerRoutes() {
 	s.Router.Mount("/", http.FileServer(http.Dir("./web")))
+
+	h := handler.NewHandler(s.Logger)
+
+	s.Router.Get("/api/nextdate", h.NextDateHandler)
 }
 
 func (s *Server) Start() error {

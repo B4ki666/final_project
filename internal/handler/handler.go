@@ -1,6 +1,8 @@
 package handler
 
-import "log"
+import (
+	"log"
+)
 
 type Handler struct {
 	Logger *log.Logger
