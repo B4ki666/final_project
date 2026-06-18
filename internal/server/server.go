@@ -1,6 +1,7 @@
 package server
 
 import (
+	service "final_project/internal/Service"
 	"final_project/internal/handler"
 	"log"
 	"net/http"
@@ -15,7 +16,7 @@ type Server struct {
 	HTTPServer *http.Server
 }
 
-func NewServer(logger *log.Logger, port string) *Server {
+func NewServer(logger *log.Logger, port string, service *service.Service) *Server {
 	route := chi.NewRouter()
 
 	srv := &Server{
@@ -23,7 +24,7 @@ func NewServer(logger *log.Logger, port string) *Server {
 		Router: route,
 	}
 
-	srv.registerRoutes()
+	srv.registerRoutes(service)
 
 	srv.HTTPServer = &http.Server{
 		Addr:         ":" + port,
@@ -37,12 +38,22 @@ func NewServer(logger *log.Logger, port string) *Server {
 	return srv
 }
 
-func (s *Server) registerRoutes() {
-	s.Router.Mount("/", http.FileServer(http.Dir("./web")))
+func (s *Server) registerRoutes(service *service.Service) {
 
-	h := handler.NewHandler(s.Logger)
+	fs := http.FileServer(http.Dir("./web"))
+	s.Router.Handle("/*", http.StripPrefix("/", fs))
 
-	s.Router.Get("/api/nextdate", h.NextDateHandler)
+	//s.Router.Mount("/", http.FileServer(http.Dir("./web")))
+
+	h := handler.NewHandler(s.Logger, service)
+
+	s.Router.Route("/api", func(r chi.Router) {
+		r.Post("/task", h.AddTaskHandler)
+		r.Get("/nextdate", h.NextDateHandler)
+	})
+
+	/*s.Router.Get("/api/nextdate", h.NextDateHandler)
+	s.Router.Post("/api/task", h.AddTaskHandler)*/
 }
 
 func (s *Server) Start() error {

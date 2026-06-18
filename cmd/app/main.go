@@ -4,8 +4,10 @@ import (
 	"log"
 	"os"
 
+	service "final_project/internal/Service"
 	"final_project/internal/config"
 	"final_project/internal/db"
+	"final_project/internal/repository"
 	"final_project/internal/server"
 )
 
@@ -24,7 +26,10 @@ func main() {
 	logger.Println("db is ready")
 	defer db.Close()
 
-	srv := server.NewServer(logger, cfg.Port)
+	repo := repository.NewRepository(db)
+	svc := service.NewService(repo, logger)
+
+	srv := server.NewServer(logger, cfg.Port, svc)
 
 	err = srv.Start()
 	if err != nil {

@@ -15,7 +15,7 @@ func afterNow(date, now time.Time) bool {
 	return date.After(now)
 }
 
-func nextYear(now time.Time, dstart string, repeat string) (string, error) {
+func nextYear(now time.Time, dstart string) (string, error) {
 	date, err := time.Parse(format, dstart)
 	if err != nil {
 		return "", err
@@ -223,7 +223,7 @@ func NextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 	switch {
 	case repeat == "y":
-		return nextYear(now, dstart, repeat)
+		return nextYear(now, dstart)
 
 	case strings.HasPrefix(repeat, "d"):
 		return nextDay(now, dstart, repeat)
