@@ -43,17 +43,13 @@ func (s *Server) registerRoutes(service *service.Service) {
 	fs := http.FileServer(http.Dir("./web"))
 	s.Router.Handle("/*", http.StripPrefix("/", fs))
 
-	//s.Router.Mount("/", http.FileServer(http.Dir("./web")))
-
 	h := handler.NewHandler(s.Logger, service)
 
 	s.Router.Route("/api", func(r chi.Router) {
 		r.Post("/task", h.AddTaskHandler)
 		r.Get("/nextdate", h.NextDateHandler)
+		r.Get("/tasks", h.GetTasksHandler)
 	})
-
-	/*s.Router.Get("/api/nextdate", h.NextDateHandler)
-	s.Router.Post("/api/task", h.AddTaskHandler)*/
 }
 
 func (s *Server) Start() error {
