@@ -49,6 +49,8 @@ func (s *Server) registerRoutes(service *service.Service) {
 		r.Post("/task", h.AddTaskHandler)
 		r.Get("/nextdate", h.NextDateHandler)
 		r.Get("/tasks", h.GetTasksHandler)
+		r.Get("/task", h.GetTaskByIDHandler)
+		r.Put("/task", h.PutTaskHandler)
 	})
 }
 

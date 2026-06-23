@@ -11,6 +11,8 @@ type TODORepository interface {
 	GetTasks(ctx context.Context) ([]model.Task, error)
 	SearchTasksByText(ctx context.Context, search string) ([]model.Task, error)
 	SearchTasksByDate(ctx context.Context, date string) ([]model.Task, error)
+	GetTaskByID(ctx context.Context, id int) (model.Task, error)
+	PutTask(ctx context.Context, task model.Task) (int, error)
 }
 
 type Service struct {
