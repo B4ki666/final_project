@@ -12,10 +12,7 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
+	_ = godotenv.Load()
 
 	cfg := Config{
 		Port:   os.Getenv("TODO_PORT"),
