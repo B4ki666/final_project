@@ -51,6 +51,8 @@ func (s *Server) registerRoutes(service *service.Service) {
 		r.Get("/tasks", h.GetTasksHandler)
 		r.Get("/task", h.GetTaskByIDHandler)
 		r.Put("/task", h.PutTaskHandler)
+		r.Post("/task/done", h.DoneTaskHandler)
+		r.Delete("/task", h.DeleteTaskHandler)
 	})
 }
 

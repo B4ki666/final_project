@@ -13,6 +13,8 @@ type TODORepository interface {
 	SearchTasksByDate(ctx context.Context, date string) ([]model.Task, error)
 	GetTaskByID(ctx context.Context, id int) (model.Task, error)
 	PutTask(ctx context.Context, task model.Task) (int, error)
+	UpdateTaskDate(ctx context.Context, next string, id string) error
+	DeleteTask(ctx context.Context, id string) (int, error)
 }
 
 type Service struct {
