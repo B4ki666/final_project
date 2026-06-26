@@ -7,11 +7,12 @@ import (
 	"net/http"
 )
 
-type TaskError struct {
-	Error string `json:"error"`
-}
+const (
+	InvalidDate = "invalid date format"
+	DecodeError = "invalid JSON"
+)
 
-func (h *Handler) SendingErrors(err error, w http.ResponseWriter) {
+func (h *Handler) HandleError(err error, w http.ResponseWriter) {
 	var taskError TaskError
 	var httpErr *service.AppError
 	if errors.As(err, &httpErr) {
@@ -24,6 +25,10 @@ func (h *Handler) SendingErrors(err error, w http.ResponseWriter) {
 		case 404:
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(taskError)
+		case 401:
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(w).Encode(taskError)
 
 		default:

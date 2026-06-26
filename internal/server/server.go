@@ -3,6 +3,7 @@ package server
 import (
 	service "final_project/internal/Service"
 	"final_project/internal/handler"
+	"final_project/internal/middleware"
 	"log"
 	"net/http"
 	"time"
@@ -14,14 +15,16 @@ type Server struct {
 	Logger     *log.Logger
 	Router     *chi.Mux
 	HTTPServer *http.Server
+	Password   string
 }
 
-func NewServer(logger *log.Logger, port string, service *service.Service) *Server {
+func NewServer(logger *log.Logger, port string, service *service.Service, password string) *Server {
 	route := chi.NewRouter()
 
 	srv := &Server{
-		Logger: logger,
-		Router: route,
+		Logger:   logger,
+		Router:   route,
+		Password: password,
 	}
 
 	srv.registerRoutes(service)
@@ -46,13 +49,19 @@ func (s *Server) registerRoutes(service *service.Service) {
 	h := handler.NewHandler(s.Logger, service)
 
 	s.Router.Route("/api", func(r chi.Router) {
-		r.Post("/task", h.AddTaskHandler)
 		r.Get("/nextdate", h.NextDateHandler)
-		r.Get("/tasks", h.GetTasksHandler)
-		r.Get("/task", h.GetTaskByIDHandler)
-		r.Put("/task", h.PutTaskHandler)
-		r.Post("/task/done", h.DoneTaskHandler)
-		r.Delete("/task", h.DeleteTaskHandler)
+		r.Post("/signin", h.SignInHandler)
+
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.AuthMiddleware(s.Password))
+
+			r.Post("/task", h.AddTaskHandler)
+			r.Get("/tasks", h.GetTasksHandler)
+			r.Get("/task", h.GetTaskByIDHandler)
+			r.Put("/task", h.PutTaskHandler)
+			r.Delete("/task", h.DeleteTaskHandler)
+			r.Post("/task/done", h.DoneTaskHandler)
+		})
 	})
 }
 

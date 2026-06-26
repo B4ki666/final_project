@@ -9,7 +9,7 @@ import (
 
 func (r *Repository) AddTask(ctx context.Context, task model.Task) (string, error) {
 	query := `INSERT INTO scheduler (date, title, comment, repeat) VALUES (:date, :title, :comment, :repeat)`
-	res, err := r.db.Exec(query,
+	res, err := r.db.ExecContext(ctx, query,
 		sql.Named("date", task.Date),
 		sql.Named("title", task.Title),
 		sql.Named("comment", task.Comment),

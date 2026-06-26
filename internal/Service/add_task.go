@@ -2,17 +2,16 @@ package service
 
 import (
 	"context"
-	"errors"
 	"final_project/internal/model"
+	"net/http"
 )
 
 func (s *Service) AddTask(ctx context.Context, task model.Task) (string, error) {
 	if task.Title == "" {
-		return "", errors.New("task title not specified")
+		return "", NewError(http.StatusBadRequest, NoTitle)
 	}
 
-	err := CheckDate(&task)
-	if err != nil {
+	if err := CheckDate(&task); err != nil {
 		return "", err
 	}
 

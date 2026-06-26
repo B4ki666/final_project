@@ -3,31 +3,32 @@ package service
 import (
 	"context"
 	"final_project/internal/model"
+	"net/http"
 )
 
-func (s *Service) PutTask(ctx context.Context, task model.Task) (model.Task, error) {
+func (s *Service) PutTask(ctx context.Context, task model.Task) error {
 	if task.Title == "" {
-		return model.Task{}, NewError(400, "task title not specified")
+		return NewError(http.StatusBadRequest, NoTitle)
 	}
 
 	if task.ID == "" {
-		return model.Task{}, NewError(400, "ID not specified")
+		return NewError(http.StatusBadRequest, NoID)
 	}
 
 	err := CheckDate(&task)
 	if err != nil {
-		return model.Task{}, NewError(400, err.Error())
+		return NewError(http.StatusBadRequest, err.Error())
 	}
 
-	result, err := s.Repo.PutTask(ctx, task)
+	rowsAffected, err := s.Repo.PutTask(ctx, task)
 
 	if err != nil {
-		return model.Task{}, err
+		return err
 	}
 
-	if result == 0 {
-		return model.Task{}, NewError(404, "task not found")
+	if rowsAffected == 0 {
+		return NewError(http.StatusNotFound, NoTask)
 	}
 
-	return model.Task{}, nil
+	return nil
 }

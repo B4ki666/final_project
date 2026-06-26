@@ -1,6 +1,7 @@
 package handler
 
 import (
+	service "final_project/internal/Service"
 	"final_project/internal/scheduler"
 	"net/http"
 	"time"
@@ -23,22 +24,18 @@ func (h *Handler) NextDateHandler(w http.ResponseWriter, r *http.Request) {
 		var err error
 		now, err = time.Parse(format, nowStr)
 		if err != nil {
-			h.Logger.Printf("invalid request: %v", err)
-			http.Error(w, "invalid data", http.StatusBadRequest)
+			h.HandleError(service.NewError(http.StatusBadRequest, InvalidDate), w)
 			return
 		}
 	} else {
 		now = time.Now()
 	}
 
-	result, err := scheduler.NextDate(now, dateStr, repeatStr)
+	response, err := scheduler.NextDate(now, dateStr, repeatStr)
 	if err != nil {
-		h.Logger.Println(err)
-		http.Error(w, "internal error", http.StatusInternalServerError)
+		h.HandleError(service.NewError(http.StatusBadRequest, err.Error()), w)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(result))
+	WriteJSON(w, http.StatusOK, response, h.Logger)
 }

@@ -5,37 +5,38 @@ import (
 	"database/sql"
 	"errors"
 	"final_project/internal/scheduler"
+	"net/http"
 	"strconv"
 	"time"
 )
 
 func (s *Service) DoneTask(ctx context.Context, id string) error {
 	if id == "" {
-		return NewError(400, "ID not specified")
+		return NewError(http.StatusBadRequest, NoID)
 	}
 
-	taskid, err := strconv.Atoi(id)
+	taskID, err := strconv.Atoi(id)
 	if err != nil {
-		return NewError(400, "invalid ID")
+		return NewError(http.StatusBadRequest, InvalidID)
 	}
 
-	task, err := s.Repo.GetTaskByID(ctx, taskid)
+	task, err := s.Repo.GetTaskByID(ctx, taskID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return NewError(404, "task not found")
+			return NewError(http.StatusNotFound, NoTask)
 		}
 
 		return err
 	}
 
 	if task.Repeat == "" {
-		result, err := s.Repo.DeleteTask(ctx, id)
+		rowsAffected, err := s.Repo.DeleteTask(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		if result == 0 {
-			return NewError(404, "task not found")
+		if rowsAffected == 0 {
+			return NewError(http.StatusNotFound, NoTask)
 		}
 
 		return nil
@@ -44,11 +45,10 @@ func (s *Service) DoneTask(ctx context.Context, id string) error {
 	now := time.Now()
 	nextDate, err := scheduler.NextDate(now, task.Date, task.Repeat)
 	if err != nil {
-		return NewError(400, err.Error())
+		return NewError(http.StatusBadRequest, err.Error())
 	}
 
-	err = s.Repo.UpdateTaskDate(ctx, nextDate, id)
-	if err != nil {
+	if err := s.Repo.UpdateTaskDate(ctx, nextDate, id); err != nil {
 		return err
 	}
 

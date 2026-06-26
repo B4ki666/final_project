@@ -7,16 +7,18 @@ import (
 )
 
 type Config struct {
-	Port   string
-	DBFile string
+	Port     string
+	DBFile   string
+	Password string
 }
 
 func Load() (*Config, error) {
 	_ = godotenv.Load()
 
 	cfg := Config{
-		Port:   os.Getenv("TODO_PORT"),
-		DBFile: os.Getenv("TODO_DBFILE"),
+		Port:     os.Getenv("TODO_PORT"),
+		DBFile:   os.Getenv("TODO_DBFILE"),
+		Password: os.Getenv("TODO_PASSWORD"),
 	}
 
 	if cfg.Port == "" {

@@ -13,19 +13,14 @@ func (h *Handler) PutTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&task)
 	if err != nil {
-		h.SendingErrors(service.NewError(400, "invalid json"), w)
+		h.HandleError(service.NewError(http.StatusBadRequest, DecodeError), w)
 		return
 	}
 
-	response, err := h.Service.PutTask(ctx, task)
-	if err != nil {
-		h.SendingErrors(err, w)
+	if err := h.Service.PutTask(ctx, task); err != nil {
+		h.HandleError(err, w)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		h.Logger.Printf("Error encoding tasks response: %v", err)
-	}
+	WriteJSON(w, http.StatusOK, struct{}{}, h.Logger)
 }

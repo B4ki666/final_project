@@ -15,10 +15,10 @@ func (s *Service) GetTasks(ctx context.Context) ([]model.Task, error) {
 }
 
 func (s *Service) SearchTasks(ctx context.Context, search string) ([]model.Task, error) {
-	t, err := time.Parse(searchFormat, search)
+	parsedDate, err := time.Parse(searchFormat, search)
 
 	if err == nil {
-		return s.Repo.SearchTasksByDate(ctx, t.Format(format))
+		return s.Repo.SearchTasksByDate(ctx, parsedDate.Format(format))
 	}
 	return s.Repo.SearchTasksByText(ctx, search)
 

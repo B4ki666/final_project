@@ -10,10 +10,10 @@ func (r *Repository) DeleteTask(ctx context.Context, id string) (int, error) {
 		return 0, err
 	}
 
-	rows, err := res.RowsAffected()
+	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return 0, err
 	}
 
-	return int(rows), nil
+	return int(rowsAffected), nil
 }

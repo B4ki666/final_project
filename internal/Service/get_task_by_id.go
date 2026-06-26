@@ -5,24 +5,25 @@ import (
 	"database/sql"
 	"errors"
 	"final_project/internal/model"
+	"net/http"
 	"strconv"
 )
 
 func (s *Service) GetTaskByID(ctx context.Context, id string) (model.Task, error) {
 
 	if id == "" {
-		return model.Task{}, NewError(400, "ID not specified")
+		return model.Task{}, NewError(http.StatusBadRequest, NoID)
 	}
 
-	taskid, err := strconv.Atoi(id)
+	taskID, err := strconv.Atoi(id)
 	if err != nil {
-		return model.Task{}, NewError(400, "invalid ID")
+		return model.Task{}, NewError(http.StatusBadRequest, InvalidID)
 	}
 
-	task, err := s.Repo.GetTaskByID(ctx, taskid)
+	task, err := s.Repo.GetTaskByID(ctx, taskID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return model.Task{}, NewError(404, "task not found")
+			return model.Task{}, NewError(http.StatusNotFound, NoTask)
 		}
 
 		return model.Task{}, err

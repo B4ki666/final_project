@@ -6,8 +6,34 @@ import (
 	"final_project/internal/model"
 )
 
-func (r *Repository) GetTasks(ctx context.Context) ([]model.Task, error) {
+func scanTasks(rows *sql.Rows) ([]model.Task, error) {
 	tasks := make([]model.Task, 0)
+
+	for rows.Next() {
+		var task model.Task
+		err := rows.Scan(
+			&task.ID,
+			&task.Date,
+			&task.Title,
+			&task.Comment,
+			&task.Repeat,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, task)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tasks, nil
+}
+
+func (r *Repository) GetTasks(ctx context.Context) ([]model.Task, error) {
 
 	query := `SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT 50`
 	rows, err := r.db.QueryContext(ctx, query)
@@ -16,32 +42,10 @@ func (r *Repository) GetTasks(ctx context.Context) ([]model.Task, error) {
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		var task model.Task
-		err := rows.Scan(
-			&task.ID,
-			&task.Date,
-			&task.Title,
-			&task.Comment,
-			&task.Repeat,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		tasks = append(tasks, task)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return tasks, nil
+	return scanTasks(rows)
 }
 
 func (r *Repository) SearchTasksByDate(ctx context.Context, date string) ([]model.Task, error) {
-	tasks := make([]model.Task, 0)
 
 	query := `SELECT id, date, title, comment, repeat FROM scheduler WHERE date = :date LIMIT 50`
 	rows, err := r.db.QueryContext(ctx, query, sql.Named("date", date))
@@ -50,32 +54,10 @@ func (r *Repository) SearchTasksByDate(ctx context.Context, date string) ([]mode
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		var task model.Task
-		err := rows.Scan(
-			&task.ID,
-			&task.Date,
-			&task.Title,
-			&task.Comment,
-			&task.Repeat,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		tasks = append(tasks, task)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return tasks, nil
+	return scanTasks(rows)
 }
 
 func (r *Repository) SearchTasksByText(ctx context.Context, search string) ([]model.Task, error) {
-	tasks := make([]model.Task, 0)
 
 	query := `SELECT id, date, title, comment, repeat FROM scheduler WHERE title
 	 LIKE :search OR comment LIKE :search ORDER BY date LIMIT 50`
@@ -86,26 +68,5 @@ func (r *Repository) SearchTasksByText(ctx context.Context, search string) ([]mo
 	}
 	defer rows.Close()
 
-	for rows.Next() {
-		var task model.Task
-		err := rows.Scan(
-			&task.ID,
-			&task.Date,
-			&task.Title,
-			&task.Comment,
-			&task.Repeat,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		tasks = append(tasks, task)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return tasks, nil
+	return scanTasks(rows)
 }

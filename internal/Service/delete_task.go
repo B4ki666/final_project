@@ -2,17 +2,18 @@ package service
 
 import (
 	"context"
+	"net/http"
 	"strconv"
 )
 
 func (s *Service) DeleteTask(ctx context.Context, id string) error {
 	if id == "" {
-		return NewError(400, "ID not specified")
+		return NewError(http.StatusBadRequest, NoID)
 	}
 
 	_, err := strconv.Atoi(id)
 	if err != nil {
-		return NewError(400, "invalid ID")
+		return NewError(http.StatusBadRequest, InvalidID)
 	}
 
 	rowsAffected, err := s.Repo.DeleteTask(ctx, id)
@@ -22,7 +23,7 @@ func (s *Service) DeleteTask(ctx context.Context, id string) error {
 	}
 
 	if rowsAffected == 0 {
-		return NewError(404, "task not found")
+		return NewError(http.StatusNotFound, NoTask)
 	}
 
 	return nil

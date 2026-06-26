@@ -27,9 +27,9 @@ func main() {
 	defer db.Close()
 
 	repo := repository.NewRepository(db)
-	svc := service.NewService(repo, logger)
+	svc := service.NewService(repo, logger, cfg.Password)
 
-	srv := server.NewServer(logger, cfg.Port, svc)
+	srv := server.NewServer(logger, cfg.Port, svc, cfg.Password)
 
 	err = srv.Start()
 	if err != nil {

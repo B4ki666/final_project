@@ -18,13 +18,15 @@ type TODORepository interface {
 }
 
 type Service struct {
-	Repo   TODORepository
-	Logger *log.Logger
+	Repo     TODORepository
+	Logger   *log.Logger
+	Password string
 }
 
-func NewService(repo TODORepository, logger *log.Logger) *Service {
+func NewService(repo TODORepository, logger *log.Logger, password string) *Service {
 	return &Service{
-		Repo:   repo,
-		Logger: logger,
+		Repo:     repo,
+		Logger:   logger,
+		Password: password,
 	}
 }

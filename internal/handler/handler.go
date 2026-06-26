@@ -16,3 +16,15 @@ func NewHandler(logger *log.Logger, service *service.Service) *Handler {
 		Service: service,
 	}
 }
+
+type SigninRequest struct {
+	Password string `json:"password"`
+}
+
+type TaskError struct {
+	Error string `json:"error"`
+}
+
+type SigninResponse struct {
+	Password string `json:"password"`
+}
