@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-const secret = "super-secret-key"
+const jwtSecretKey = "super-secret-key"
 
 func GenerateToken(password string) (string, error) {
 	sum := sha256.Sum256([]byte(password))
@@ -21,7 +21,7 @@ func GenerateToken(password string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString([]byte(secret))
+	tokenString, err := token.SignedString([]byte(jwtSecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -38,7 +38,7 @@ func ValidateToken(tokenString string, password string) error {
 		if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
 			return nil, fmt.Errorf("explicitly expected HS256, got: %v", token.Method.Alg())
 		}
-		return []byte(secret), nil
+		return []byte(jwtSecretKey), nil
 	},
 	)
 	if err != nil {

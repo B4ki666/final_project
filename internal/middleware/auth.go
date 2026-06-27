@@ -20,9 +20,7 @@ func AuthMiddleware(password string) func(http.Handler) http.Handler {
 				return
 			}
 
-			err = auth.ValidateToken(cookie.Value, password)
-
-			if err != nil {
+			if err = auth.ValidateToken(cookie.Value, password); err != nil {
 				http.Error(w, "Unauthorized: invalid or expired token", http.StatusUnauthorized)
 				return
 			}
