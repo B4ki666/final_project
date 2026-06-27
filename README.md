@@ -94,22 +94,24 @@ docker build -t final-project .
 
 ### Запуск контейнера
 
-docker run -d \ 
---name final-project \ 
--p 7540:7540 \ 
--e TODO_PORT=7540 \ 
--e TODO_DBFILE=/data/scheduler.db \ 
--e TODO_PASSWORD=12345 \ 
--v $(pwd)/scheduler.db:/data/scheduler.db \ 
-final-project
+```bash
+docker run -d \
+  --name final-project \
+  -p 7540:7540 \
+  -e TODO_PORT=7540 \
+  -e TODO_DBFILE=/data/scheduler.db \
+  -e TODO_PASSWORD=12345 \
+  -v $(pwd)/scheduler.db:/data/scheduler.db \
+  final-project
+```
 
 ### Описание параметров
 
--p 7540:7540 — пробрасывает порт контейнера на хост.
--e TODO_PORT=7540 — задаёт порт веб-сервера.
--e TODO_DBFILE=/data/scheduler.db — указывает путь к файлу базы данных внутри контейнера.
--e TODO_PASSWORD=12345 — задаёт пароль для аутентификации.
--v $(pwd)/scheduler.db:/data/scheduler.db — подключает файл базы данных с хоста, благодаря чему данные сохраняются между перезапусками контейнера.
+- `-p 7540:7540` — пробрасывает порт контейнера на хост.
+- `-e TODO_PORT=7540` — задаёт порт веб-сервера.
+- `-e TODO_DBFILE=/data/scheduler.db` — указывает путь к файлу базы данных внутри контейнера.
+- `-e TODO_PASSWORD=12345` — задаёт пароль для аутентификации.
+- `-v $(pwd)/scheduler.db:/data/scheduler.db` — подключает файл базы данных с хоста, благодаря чему данные сохраняются между перезапусками контейнера.
 
 После запуска приложение будет доступно по адресу:
 
