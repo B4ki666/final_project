@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	service "final_project/internal/Service"
 	"final_project/internal/model"
+	service "final_project/internal/service"
 	"net/http"
 )
 

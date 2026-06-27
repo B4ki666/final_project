@@ -3,10 +3,12 @@ package service
 import "fmt"
 
 const (
-	NoTitle   = "task title not specified"
-	NoID      = "ID not specified"
-	InvalidID = "invalid ID"
-	NoTask    = "task not found"
+	NoTitle         = "task title not specified"
+	NoID            = "ID not specified"
+	InvalidID       = "invalid ID"
+	NoTask          = "task not found"
+	NoPassword      = "password not specified"
+	InvalidPassword = "incorrect password"
 )
 
 type AppError struct {

@@ -4,11 +4,11 @@ import (
 	"log"
 	"os"
 
-	service "final_project/internal/Service"
 	"final_project/internal/config"
 	"final_project/internal/db"
 	"final_project/internal/repository"
 	"final_project/internal/server"
+	service "final_project/internal/service"
 )
 
 func main() {

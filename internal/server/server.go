@@ -1,9 +1,9 @@
 package server
 
 import (
-	service "final_project/internal/Service"
 	"final_project/internal/handler"
 	"final_project/internal/middleware"
+	service "final_project/internal/service"
 	"log"
 	"net/http"
 	"time"

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	service "final_project/internal/Service"
+	service "final_project/internal/service"
 	"log"
 )
 

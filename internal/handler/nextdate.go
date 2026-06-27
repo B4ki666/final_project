@@ -1,8 +1,8 @@
 package handler
 
 import (
-	service "final_project/internal/Service"
 	"final_project/internal/scheduler"
+	service "final_project/internal/service"
 	"net/http"
 	"time"
 )

@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	service "final_project/internal/Service"
+	service "final_project/internal/service"
 	"net/http"
 )
 
